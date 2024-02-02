@@ -1,0 +1,21 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: standard
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: test-standard
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: helm
+    
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: kustomize
+    

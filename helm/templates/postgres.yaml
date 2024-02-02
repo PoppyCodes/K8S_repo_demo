@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.db.name }}-helm-config
+  namespace: {{ .Values.namespace }}
+data:
+  POSTGRES_DB: c3RvcmVkYg==
+  POSTGRES_HOST_AUTH_METHOD: dHJ1c3Q=
+  POSTGRES_PASSWORD: cGFzc3dvcmQ=
+  POSTGRES_USER: YWRtaW4=
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: db
+  serviceName: db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      volumes:
+        - name: {{ .Values.db.name }}-helm-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.db.name }}-helm-db-pvc
+      containers:
+        - name: db
+          image: {{ .Values.db.image }}
+          ports:
+          - containerPort: {{ .Values.db.port }}
+            name: db
+          envFrom:
+          - secretRef:
+              name: {{ .Values.db.name }}-helm-config
+          volumeMounts:
+          - mountPath: "/var/lib/postgresql/data/"
+            name: {{ .Values.db.name }}-helm-storage
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: db
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.db.port }}
+    targetPort: {{ .Values.db.port }}
+  type: ClusterIP
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.pv.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  capacity:
+    storage: {{ .Values.pv.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/helm"
+  storageClassName: {{ .Values.namespace }}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvc.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.namespace }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.storage }}

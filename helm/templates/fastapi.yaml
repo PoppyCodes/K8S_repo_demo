@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fastapi.name }}-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    name: {{ .Values.fastapi.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.fastapi.name}}
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fastapi.name }}
+    spec:
+      containers:
+        - name: {{ .Values.fastapi.name}}
+          image: {{ .Values.fastapi.image }}
+          ports:
+            - containerPort: 5000
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.fastapi.name }}-hpa
+  namespace: {{ .Values.namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.fastapi.name }}-deployment
+  minReplicas: {{ .Values.fastapi_hpa.minReplicas }}
+  maxReplicas: {{ .Values.fastapi_hpa.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.fastapi_hpa.targetCPUUtilizationPercentage }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.fastapi.name }}-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.fastapi.name }}
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.fastapi_service.clusteripport }}
+      targetPort: {{ .Values.fastapi.port}}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.fastapi.name}}-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: {{.Values.fastapi.name }}-certificate
+      hosts:
+      - {{ .Values.fastapi_ingress.host }}
+  rules:
+  - host: {{ .Values.fastapi_ingress.host }}
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+              service:
+                name: {{ .Values.fastapi.name }}-service
+                port:
+                  number: {{ .Values.fastapi_ingress.port }}

@@ -1,0 +1,44 @@
+# Default values for helm.
+namespace: helm
+
+replicaCount: 3
+
+fastapi:
+  name: fastapi
+  image: chpinart/fastapi:1.0.0
+  port: 5000
+
+fastapi_service:
+  clusteripport: 5000
+
+fastapi_ingress:
+  port: 5000
+  host: "k3seval.chpinart.cloudns.ph"
+
+fastapi_hpa:
+  minReplicas: 3
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+db:
+  name: postgres
+  image: postgres:12.0-alpine
+  port: 5432
+  targetport: 5432
+
+pv:
+  name: postgres-helm-db-pv
+  storage: 128Mi
+
+pvc:
+  name: postgres-helm-db-pvc
+  storage: 128Mi
+
+pgadmin:
+  name: pgadmin
+  replicascount: 1
+  image: dpage/pgadmin4
+  containerport: 80
+  port: 80
+  targetPort: 80
+  nodePort: 30002
