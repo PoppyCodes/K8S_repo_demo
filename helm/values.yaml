@@ -13,11 +13,18 @@ fastapi_service:
 
 fastapi_ingress:
   port: 5000
-  host: "k3seval.chpinart.cloudns.ph"
+  host: k3seval.chpinart.cloudns.ph
+
+fastapi_certificate:
+  name: k3seval.chpinart.cloudns.ph
+  secretname: letsencrypt-prod
+  issuername: letsencrypt-prod
+  dnsnames: k3seval.chpinart.cloudns.ph
+
 
 fastapi_hpa:
-  minReplicas: 3
-  maxReplicas: 6
+  minreplicas: 3
+  maxreplicas: 6
   targetCPUUtilizationPercentage: 70
 
 db:
@@ -28,11 +35,11 @@ db:
 
 pv:
   name: postgres-helm-db-pv
-  storage: 128Mi
+  storage: 100Mi
 
 pvc:
   name: postgres-helm-db-pvc
-  storage: 128Mi
+  storage: 100Mi
 
 pgadmin:
   name: pgadmin
@@ -40,5 +47,5 @@ pgadmin:
   image: dpage/pgadmin4
   containerport: 80
   port: 80
-  targetPort: 80
-  nodePort: 30002
+  targetport: 80
+  nodeport: 30002

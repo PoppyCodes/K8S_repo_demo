@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: letsencrypt-prod # nom de la ressource
-  namespace: test-standard
+  namespace: standard
 spec:
   acme:
     # L'URL du serveur ACME

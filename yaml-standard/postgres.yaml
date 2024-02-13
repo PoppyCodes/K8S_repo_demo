@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: postgres-standard-config
-  namespace: test-standard
+  namespace: standard
 data:
   POSTGRES_USER: YWRtaW4=
   POSTGRES_PASSWORD: cGFzc3dvcmQ=
@@ -15,7 +15,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: postgres-db-pv
-  namespace: test-standard
+  namespace: standard
 spec:
   capacity:
     storage: 100Mi
@@ -30,7 +30,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-db-pvc
-  namespace: test-standard
+  namespace: standard
 spec:
   accessModes:
     - ReadWriteOnce
@@ -44,7 +44,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: db
-  namespace: test-standard
+  namespace: standard
 spec:
   selector:
     matchLabels:
@@ -79,7 +79,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db
-  namespace: test-standard
+  namespace: standard
 spec:
   type: ClusterIP
   selector:

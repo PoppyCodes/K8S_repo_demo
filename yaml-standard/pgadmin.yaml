@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: pgadmin-secret
-  namespace: test-standard
+  namespace: standard
 data:
   PGADMIN_DEFAULT_EMAIL: YWRtaW5AYWRtaW4uY29t
   PGADMIN_DEFAULT_PASSWORD: cm9vdA==
@@ -13,7 +13,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pgadmin
-  namespace: test-standard
+  namespace: standard
   labels:
     name: pgadmin
 spec:
@@ -47,7 +47,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pgadmin-service
-  namespace: test-standard
+  namespace: standard
 spec:
   type: NodePort
   selector:

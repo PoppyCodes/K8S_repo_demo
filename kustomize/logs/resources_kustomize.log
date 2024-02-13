@@ -1,0 +1,25 @@
+NAME                                      READY   STATUS    RESTARTS        AGE
+pod/pgadmin-8494d946d4-kw5wc              1/1     Running   0               8m50s
+pod/db-0                                  1/1     Running   0               8m50s
+pod/fastapi-deployment-5cc688d578-6hqfm   1/1     Running   2 (8m39s ago)   8m50s
+pod/fastapi-deployment-5cc688d578-82lxm   1/1     Running   2 (8m41s ago)   8m50s
+pod/fastapi-deployment-5cc688d578-vxzqc   1/1     Running   2 (8m39s ago)   8m50s
+
+NAME                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/db                ClusterIP   10.43.81.82    <none>        5432/TCP       8m50s
+service/fastapi-service   ClusterIP   10.43.76.156   <none>        5000/TCP       8m50s
+service/pgadmin-service   NodePort    10.43.215.57   <none>        80:30081/TCP   8m50s
+
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pgadmin              1/1     1            1           8m50s
+deployment.apps/fastapi-deployment   3/3     3            3           8m50s
+
+NAME                                            DESIRED   CURRENT   READY   AGE
+replicaset.apps/pgadmin-8494d946d4              1         1         1       8m50s
+replicaset.apps/fastapi-deployment-5cc688d578   3         3         3       8m50s
+
+NAME                  READY   AGE
+statefulset.apps/db   1/1     8m50s
+
+NAME                                              REFERENCE                       TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/fastapi-hpa   Deployment/fastapi-deployment   <unknown>/70%   3         6         3          8m50s

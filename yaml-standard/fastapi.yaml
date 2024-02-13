@@ -57,6 +57,19 @@ spec:
       targetPort: 5000
 
 ---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: k3seval.chpinart.cloudns.ph
+  namespace: standard
+spec:
+  secretName: letsencrypt-prod
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - k3seval.chpinart.cloudns.ph
+---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -68,7 +81,7 @@ metadata:
 spec:
   ingressClassName: traefik
   tls:
-    - secretName: fastapi-certificate
+    - secretName: letsencrypt-prod
       hosts:
       - k3seval.chpinart.cloudns.ph
   rules:

@@ -1,0 +1,3 @@
+- op: add #action
+  path: "/spec/replicas" #resource we want to change
+  value: 3

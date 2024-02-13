@@ -1,4 +1,4 @@
-env=standard
+env=helm
 
 kubectl logs -n $env -l app=fastapi > logs/fastapi_$env.log
 kubectl logs -n $env -l name=pgadmin > logs/pgadmin_$env.log

@@ -2,16 +2,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fastapi-deployment
-  namespace: kustomize
+  namespace: test
   labels:
     app: fastapi
 spec:
+  strategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: fastapi
-  replicas: 3
-  strategy:
-    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -57,6 +56,19 @@ spec:
       targetPort: 5000
 
 ---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: k3seval.chpinart.cloudns.ph
+  namespace: kustomize
+spec:
+  secretName: letsencrypt-prod
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - k3seval.chpinart.cloudns.ph
+---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -68,7 +80,7 @@ metadata:
 spec:
   ingressClassName: traefik
   tls:
-    - secretName: fastapi-certificate
+    - secretName: letsencrypt-prod
       hosts:
       - k3seval.chpinart.cloudns.ph
   rules:

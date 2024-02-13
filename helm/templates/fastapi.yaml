@@ -35,8 +35,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Values.fastapi.name }}-deployment
-  minReplicas: {{ .Values.fastapi_hpa.minReplicas }}
-  maxReplicas: {{ .Values.fastapi_hpa.maxReplicas }}
+  minReplicas: {{ .Values.fastapi_hpa.minreplicas }}
+  maxReplicas: {{ .Values.fastapi_hpa.maxreplicas }}
   targetCPUUtilizationPercentage: {{ .Values.fastapi_hpa.targetCPUUtilizationPercentage }}
 
 ---
@@ -57,6 +57,19 @@ spec:
       targetPort: {{ .Values.fastapi.port}}
 
 ---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.fastapi_certificate.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  secretName: {{ .Values.fastapi_certificate.secretname }}
+  issuerRef:
+    name: {{ .Values.fastapi_certificate.issuername }}
+    kind: ClusterIssuer
+  dnsNames:
+  - {{ .Values.fastapi_certificate.dnsnames }}
+---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -64,11 +77,11 @@ metadata:
   name: {{ .Values.fastapi.name}}-ingress
   namespace: {{ .Values.namespace }}
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: {{ .Values.fastapi_certificate.issuername }}
 spec:
   ingressClassName: traefik
   tls:
-    - secretName: {{.Values.fastapi.name }}-certificate
+    - secretName: letsencrypt-prod
       hosts:
       - {{ .Values.fastapi_ingress.host }}
   rules:
